@@ -23,6 +23,7 @@ import (
 const (
 	policiesStatusSyncLog  = "policies-status-sync"
 	policyCleanupFinalizer = "hub-of-hubs.open-cluster-management.io/policy-cleanup"
+	rootPolicyLabel        = "policy.open-cluster-management.io/root-policy"
 )
 
 // AddPoliciesStatusController adds policies status controller to the manager.
@@ -55,8 +56,8 @@ func AddPoliciesStatusController(mgr ctrl.Manager, transport transport.Transport
 			minStatusPredicate),
 	}
 
-	hohNamespacePredicate := predicate.NewPredicateFuncs(func(meta metav1.Object, object runtime.Object) bool {
-		return meta.GetNamespace() == datatypes.HohSystemNamespace
+	rootPolicyPredicate := predicate.NewPredicateFuncs(func(meta metav1.Object, object runtime.Object) bool {
+		return !helpers.HasLabel(meta, rootPolicyLabel) // replicated policies have this label, root policy doesn't
 	})
 	ownerRefAnnotationPredicate := predicate.NewPredicateFuncs(func(meta metav1.Object, object runtime.Object) bool {
 		return helpers.HasAnnotation(meta, datatypes.OriginOwnerReferenceAnnotation)
@@ -65,7 +66,7 @@ func AddPoliciesStatusController(mgr ctrl.Manager, transport transport.Transport
 	// initialize policy status controller (contains multiple bundles)
 	if err := generic.NewGenericStatusSyncController(mgr, policiesStatusSyncLog, transport, policyCleanupFinalizer,
 		bundleCollection, createObjFunction, syncInterval,
-		predicate.And(hohNamespacePredicate, ownerRefAnnotationPredicate)); err != nil {
+		predicate.And(rootPolicyPredicate, ownerRefAnnotationPredicate)); err != nil {
 		return fmt.Errorf("failed to add controller to the manager - %w", err)
 	}
 
