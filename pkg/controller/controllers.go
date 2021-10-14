@@ -12,8 +12,9 @@ import (
 	configv1 "github.com/open-cluster-management/hub-of-hubs-data-types/apis/config/v1"
 	configCtrl "github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/config"
 	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/managedclusters"
+	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/clusterlifecycle"
+
 	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/policies"
-	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/clusterdeployments"
 	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/transport"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -50,7 +51,7 @@ func AddControllers(mgr ctrl.Manager, transportImpl transport.Transport, syncInt
 	addControllerFunctions := []func(ctrl.Manager, transport.Transport, time.Duration, string, *configv1.Config) error{
 		managedclusters.AddClustersStatusController,
 		policies.AddPoliciesStatusController,
-		clusterdeployments.AddClusterDeploymentStatusController,
+		clusterlifecycle.AddClusterDeploymentStatusController,
 	}
 
 	for _, addControllerFunction := range addControllerFunctions {
