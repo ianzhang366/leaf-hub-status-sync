@@ -10,9 +10,9 @@ import (
 	clustersv1 "github.com/open-cluster-management/api/cluster/v1"
 	policiesv1 "github.com/open-cluster-management/governance-policy-propagator/pkg/apis/policy/v1"
 	configv1 "github.com/open-cluster-management/hub-of-hubs-data-types/apis/config/v1"
+	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/clusterlifecycle"
 	configCtrl "github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/config"
 	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/managedclusters"
-	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/clusterlifecycle"
 
 	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/controller/policies"
 	"github.com/open-cluster-management/leaf-hub-status-sync/pkg/transport"

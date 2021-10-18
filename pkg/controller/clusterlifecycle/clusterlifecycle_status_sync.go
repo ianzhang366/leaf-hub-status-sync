@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	componentName                     = "clusterdeployments"
-	logName                           = "clusterdeployment-status-sync"
-	targetNamespace = "hub-of-hubs.open-cluster-management.io/remoteNamespace"
+	componentName = "clusterdeployments"
+	logName       = "clusterdeployment-status-sync"
+
 	clusterdeploymentCleanupFinalizer = "hub-of-hubs.open-cluster-management.io/clusterdeployment-cleanup"
 )
 
@@ -39,14 +39,8 @@ func AddClusterDeploymentStatusController(mgr ctrl.Manager, transport transport.
 			}), // at this point send all managed clusters even if aggregation level is minimal
 	}
 
-	var filterByRemoteAnnotation := predicate.NewPredicateFuncs(func(meta metav1.Object, object runtime.Object) bool{
-		_, ok := meta.GetAnnotations[targetNamespace]
-
-		return ok
-	})
-
 	if err := generic.NewGenericStatusSyncController(mgr, logName, transport,
-		clusterdeploymentCleanupFinalizer, bundleCollection, createObjFunction, syncInterval, filterByRemoteAnnotation); err != nil {
+		clusterdeploymentCleanupFinalizer, bundleCollection, createObjFunction, syncInterval, nil); err != nil {
 		return fmt.Errorf("failed to add %s controller to the manager - %w", componentName, err)
 	}
 
